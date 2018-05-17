@@ -1,0 +1,51 @@
+<template>
+  <style>
+    article {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fef;
+      padding: 20px;
+      border: 1px solid green;
+      font-family: Helvetica;
+    }
+    section {
+      position: absolute;
+      z-index: -1;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 20%;
+      background: yellow;
+    }
+    strong {
+      color: green;
+    }
+  </style>
+
+
+  <article>
+    <section></section>
+    <slot name="title">Заполните форму</slot>
+  </article>
+</template>
+
+<script>
+  class ProgressBar extends HTMLElement {
+    constructor() {
+      super()
+
+      const thisDoc =  (document._currentScript || document.currentScript).ownerDocument
+
+      let template = thisDoc.querySelector('template')
+      let templateContent = template.content
+
+      this.shadow = this.attachShadow({ mode: 'open' })
+      const shadowRoot = this.shadow.appendChild(templateContent.cloneNode(true))
+    }
+  }
+
+  customElements.define('progress-bar', ProgressBar)
+</script>

@@ -1,0 +1,76 @@
+<!-- Defines element markup -->
+<template>
+  <link rel="import" href="progress-bar.html">
+  <link rel="import" href="form-input.html">
+  <style>
+    div {
+      background: #eef;
+      padding: 20px;
+      border: 1px solid yellow;
+    }
+    strong {
+      color: red;
+    }
+
+    /* Not working. No way to compose styles on one element :( */
+    progress-bar {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+  </style>
+
+  <p>
+    <progress-bar>
+      <span slot='title' id='progress-bar'>Form is done by <strong>20</strong>%</span>
+    </progress-bar>
+  </p>
+
+  <form-input>FormBuilder own form-input</form-input>
+</template>
+
+<script>
+  class FormBuilder extends HTMLElement {
+    constructor() {
+      // Always call super first in constructor
+      super()
+
+      const thisDoc =  (document._currentScript || document.currentScript).ownerDocument
+
+      let template = thisDoc.querySelector('template')
+      let templateContent = template.content
+
+      this.shadow = this.attachShadow({ mode: 'open' })
+      const shadowRoot = this.shadow.appendChild(templateContent.cloneNode(true))
+
+      const div = document.createElement('div')
+      shadowRoot.appendChild(div)
+
+      div.innerHTML = 'qwe'
+
+      setTimeout(() => {
+        this.updateProgress()
+      }, 1000)
+    }
+
+    connectedCallback() {
+      console.log('connectedCallback')
+
+      this.shadow.querySelector('form-input').addEventListener('nextValue', (e) => {
+        const len = e.detail.length
+
+        this.updateProgress(len * 10)
+      });
+    }
+
+    updateProgress(val = 20) {
+      const displayVal = Math.min(val, 100)
+
+      this.shadow.querySelector('#progress-bar').innerHTML = `Form is done by <strong>${val}</strong>%`
+    }
+  }
+
+  customElements.define('form-builder', FormBuilder)
+</script>

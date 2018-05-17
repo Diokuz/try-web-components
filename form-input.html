@@ -1,0 +1,57 @@
+<template>
+  <style>
+    article {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border: 1px solid pink;
+      font-family: Helvetica;
+    }
+    strong {
+      color: green;
+    }
+    input {
+      display: block;
+      padding: 4px 12px;
+    }
+    span {
+      margin-top: 10px;
+    }
+  </style>
+
+
+  <article>
+    <input />
+    <span>Validation message</span>
+  </article>
+</template>
+
+<script>
+  class Input extends HTMLElement {
+    constructor() {
+      super()
+
+      const thisDoc =  (document._currentScript || document.currentScript).ownerDocument
+
+      let template = thisDoc.querySelector('template')
+      let templateContent = template.content
+
+      this.shadow = this.attachShadow({ mode: 'open' })
+      const shadowRoot = this.shadow.appendChild(templateContent.cloneNode(true))
+
+      const input = this.shadow.querySelector('input')
+
+      input.addEventListener('keydown', (e) => {
+        setTimeout(() => {
+          this.dispatchEvent(new CustomEvent('nextValue', { detail: input.value }));
+        })
+      })
+    }
+  }
+
+  customElements.define('form-input', Input)
+</script>
